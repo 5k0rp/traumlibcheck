@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 typedef unsigned long FileSizeType;
 
@@ -41,4 +42,20 @@ public:
 	void add(const std::wstring& str, FileSizeType size);
 
 	void sort();
+
+	iterator bsearch(const wchar_t* path) {
+		LibNode val(path, 0);
+		iterator it = std::lower_bound(begin(), end(), val);
+		if(it != end() && !(val < *it))
+			return it;
+		return end();
+	}
+
+	const_iterator bsearch(const wchar_t* path) const {
+		LibNode val(path, 0);
+		const_iterator it = std::lower_bound(begin(), end(), val);
+		if(it != end() && !(val < *it))
+			return it;
+		return end();
+	}
 };

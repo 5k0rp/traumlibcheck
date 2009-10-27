@@ -45,6 +45,13 @@ int wmain(int argc, wchar_t* argv[])
 	traumDb.sort();
 	wprintf(L"  done\n");
 
+	LibNodeCalalog::iterator tit = traumDb.begin();
+	for(; tit != traumDb.end(); ++tit){
+		LibNodeCalalog::iterator dit = dirStruct.bsearch(tit->path());
+		if(dit != dirStruct.end())
+			dit->doMarked();
+	}
+	
 	return 0;
 }
 
