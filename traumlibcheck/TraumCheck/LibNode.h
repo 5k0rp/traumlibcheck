@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-#include <vector>
 #include <algorithm>
 
 typedef unsigned long FileSizeType;
@@ -23,6 +21,8 @@ public:
 
 	const wchar_t* path() const { return path_.c_str(); }
 	FileSizeType size() const { return 1; } 
+
+	void getFolder(std::wstring& out) const;
 
 	bool operator<(const LibNode& node) const { return lpath_ < node.lpath_; }
 };

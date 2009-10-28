@@ -186,6 +186,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\null_wcodecvt.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TabTokenParser.cpp"
 				>
 			</File>
@@ -217,6 +221,10 @@
 			</File>
 			<File
 				RelativePath=".\LibNode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\null_wcodecvt.h"
 				>
 			</File>
 			<File

@@ -5,8 +5,6 @@
 #include <windows.h>
 #include <algorithm>
 
-typedef std::vector<std::wstring> Combowstrings;
-
 DirStructure::DirStructure()
 {
 }

@@ -61,7 +61,6 @@ bool unicode_to_ansi_convert(std::string& result, const wchar_t* wstr, unsigned 
 	::WideCharToMultiByte(codepage, 0, wstr, static_cast<int>(wstr_len), const_cast<char*>(result.c_str()), alen, NULL, NULL);
 
 	//исключаем терминальный символ
-	//HINT: Уверенность относительно одного байта?
 	result.erase(result.size() - 1, 1);
 
 	return true;
