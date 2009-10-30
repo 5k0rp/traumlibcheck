@@ -6,21 +6,37 @@ typedef unsigned long FileSizeType;
 
 class LibNode
 {
+public:
+	enum MarkType
+	{	
+		NO_FILE,
+		WRONG_SIZE,
+		WRONG_CASE,
+		ALL_GOOD
+	};
+			
+private:
 	std::wstring path_;
 	std::wstring lpath_;
 	
 	FileSizeType size_;
 
-	bool marked_;
+	MarkType mark_;
 
 public:
 	LibNode(const wchar_t* _path, FileSizeType _size);
 
-	void doMarked() { marked_ = true; }
-	bool isMarked() const { return marked_; }
+	void setMark(MarkType _mark) { mark_ = _mark; }
+	MarkType mark() const { return mark_; }
 
 	const wchar_t* path() const { return path_.c_str(); }
-	FileSizeType size() const { return 1; } 
+	
+	const wchar_t* file() const { 
+		std::wstring::size_type pos = path_.find_last_of(L'\\');
+		return pos == std::wstring::size_type(-1) ? path_.c_str() : path_.c_str() + pos + 1;
+	}
+	
+	FileSizeType size() const { return size_; } 
 
 	void getFolder(std::wstring& out) const;
 

@@ -17,10 +17,10 @@ bool DirStructure::add(const wchar_t *path)
 	LibNodeCalalog::add(path, 0);
 
 	std::wstring basepath(path);
-	basepath.push_back('\\');
+	basepath.push_back(L'\\');
 	
 	std::wstring searchpath(basepath);
-	searchpath.push_back('*');
+	searchpath.push_back(L'*');
 	
 	WIN32_FIND_DATA findFileData;
 	HANDLE hFind = FindFirstFileW(searchpath.c_str(),  &findFileData);

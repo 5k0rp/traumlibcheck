@@ -15,11 +15,24 @@ void splitPath(Combowstrings& tree, const wchar_t* ptr)
 	const wchar_t* start = ptr;
 
 	for(; *ptr; ++ptr)
-		if((*ptr == L'\\') || (*ptr == L'/')){
+		if(*ptr == L'\\')
 			tree.push_back(std::wstring(start, ptr));
-			//start = ptr + 1;
-		}
+
 	tree.push_back(std::wstring(start, ptr));
+}
+
+bool checkAndPrint(std::wostream& fout, const LibNodeCalalog& cat, LibNode::MarkType type, const wchar_t* header)
+{
+	bool isFind = false;
+	for(LibNodeCalalog::const_iterator it = cat.begin(); it != cat.end(); ++it)
+		if(it->mark() == type){
+			if(!isFind){
+				isFind = true;
+				fout << wendl << header << wendl;
+			}
+			fout << it->path() << wendl;
+		}
+	return isFind;
 }
 
 int wmain(int argc, wchar_t* argv[])
@@ -98,14 +111,23 @@ int wmain(int argc, wchar_t* argv[])
 			for(; it != tree.end(); ++it){
 				dit = dirStruct.bsearch(it->c_str());
 				if(dit != dirStruct.end())
-					dit->doMarked();
+					if(wcscmp(LibNode(it->c_str(), 0).file(), dit->file()))
+						dit->setMark(LibNode::WRONG_CASE);
+					else
+						dit->setMark(LibNode::ALL_GOOD);
 			}
 		}
 
 		LibNodeCalalog::iterator dit = dirStruct.bsearch(tit->path());
 		if(dit != dirStruct.end()){
-			dit->doMarked();
-			tit->doMarked();
+			if(tit->size() == dit->size())
+				if(wcscmp(tit->file(), dit->file()))
+					dit->setMark(LibNode::WRONG_CASE);
+				else
+					dit->setMark(LibNode::ALL_GOOD);
+			else
+				dit->setMark(LibNode::WRONG_SIZE);
+			
 		}
 		else {
 			if(!lostFiles){
@@ -116,16 +138,9 @@ int wmain(int argc, wchar_t* argv[])
 		}
 	}
 
-	bool overFiles = false;
-
-	for(dit = dirStruct.begin(); dit != dirStruct.end(); ++dit)
-		if(!dit->isMarked()){
-			if(!overFiles){
-				overFiles = true;
-				fout << wendl << L"Лишнее в библиотеке:" << wendl;
-			}
-			fout << dit->path() << wendl;
-		}
+	bool overFiles = checkAndPrint(fout, dirStruct, LibNode::NO_FILE, L"\nЛишнее в библиотеке:");
+	overFiles = checkAndPrint(fout, dirStruct, LibNode::WRONG_SIZE, L"\nДругой размер:") || overFiles;
+	overFiles = checkAndPrint(fout, dirStruct, LibNode::WRONG_CASE, L"\nОтличается регистр букв:") || overFiles;
 
 	if(!lostFiles && !overFiles)
 		fout << wendl << L"Расхождений не обнаружено!" << wendl;

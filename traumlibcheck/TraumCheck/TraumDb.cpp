@@ -6,6 +6,7 @@
 
 #include <windows.h>
 #include <fstream>
+#include <functional>
 
 struct TraumDbLineBookParser : public TabTokenParser
 {
@@ -67,6 +68,8 @@ bool TraumDb::add(const wchar_t *pathdb)
 		std::wstring file;
 		ansi_to_unicode_convert(file, book.bookFileName.c_str(), (unsigned int)book.bookFileName.size(), 1251);
 
+		std::replace_if(path.begin(), path.end(), std::bind2nd(std::equal_to<wchar_t>(), L'/'), L'\\');
+		
 		path += file;
 		path += L".zip";
 
