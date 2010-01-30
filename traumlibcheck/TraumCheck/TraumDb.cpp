@@ -55,6 +55,9 @@ bool TraumDb::add(const wchar_t *pathdb)
 
 	std::ifstream db(pathdb);
 
+	if(!db.is_open())
+		return false;
+
 	while(db){
 		db.getline(readBuf, bufSize);
 		if(db.eof())

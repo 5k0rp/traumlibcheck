@@ -14,8 +14,6 @@ bool DirStructure::add(const wchar_t *path)
 	if(!path || !*path)
 		return false;
 
-	LibNodeCalalog::add(path, 0);
-
 	std::wstring basepath(path);
 	basepath.push_back(L'\\');
 	
@@ -29,6 +27,8 @@ bool DirStructure::add(const wchar_t *path)
 		FindClose(hFind);
 		return false;
 	}
+
+	LibNodeCalalog::add(path, 0);
 
 	Combowstrings delaydirs;
 	

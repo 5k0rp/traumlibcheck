@@ -37,7 +37,8 @@ bool checkAndPrint(std::wostream& fout, const LibNodeCalalog& cat, LibNode::Mark
 
 int wmain(int argc, wchar_t* argv[])
 {
-	wprintf(L"Traum library check tool. V1.1b. 2009-10-29. Sk0rp\n");
+	wprintf(L"Traum library check tool. v1.1 2010-01-30. Sk0rp\n");
+	wprintf(L"\n Look for helps and updates:\n http://code.google.com/p/traumlibcheck/\n\n");
 	
 	DirStructure dirStruct;
 
