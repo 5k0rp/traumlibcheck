@@ -28,7 +28,7 @@ bool DirStructure::add(const wchar_t *path)
 		return false;
 	}
 
-	LibNodeCalalog::add(path, 0);
+	LibNodeCatalog<LibNodeMarked>::add(path, 0);
 
 	Combowstrings delaydirs;
 	
@@ -39,7 +39,7 @@ bool DirStructure::add(const wchar_t *path)
 				delaydirs.push_back(findFileData.cFileName);
 		}
 		else
-			LibNodeCalalog::add(basepath + findFileData.cFileName, findFileData.nFileSizeLow);
+			LibNodeCatalog<LibNodeMarked>::add(basepath + findFileData.cFileName, findFileData.nFileSizeLow);
 	}
 	while(FindNextFileW(hFind,  &findFileData));
 

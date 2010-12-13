@@ -2,7 +2,7 @@
 
 #include "LibNode.h"
 
-class TraumDb : public LibNodeCalalog
+class TraumDb : public LibNodeCatalog<LibNode>
 {
 public:
 	TraumDb();

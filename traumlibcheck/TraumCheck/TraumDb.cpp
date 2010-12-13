@@ -76,7 +76,7 @@ bool TraumDb::add(const wchar_t *pathdb)
 		path += file;
 		path += L".zip";
 
-		LibNodeCalalog::add(path.c_str(), book.asize);
+		LibNodeCatalog<LibNode>::add(path.c_str(), book.asize);
 	}
 
 	return true;

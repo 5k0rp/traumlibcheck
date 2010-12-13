@@ -6,28 +6,13 @@ typedef unsigned long FileSizeType;
 
 class LibNode
 {
-public:
-	enum MarkType
-	{	
-		NO_FILE,
-		WRONG_SIZE,
-		WRONG_CASE,
-		ALL_GOOD
-	};
-			
-private:
 	std::wstring path_;
 	std::wstring lpath_;
 	
 	FileSizeType size_;
 
-	MarkType mark_;
-
 public:
 	LibNode(const wchar_t* _path, FileSizeType _size);
-
-	void setMark(MarkType _mark) { mark_ = _mark; }
-	MarkType mark() const { return mark_; }
 
 	const wchar_t* path() const { return path_.c_str(); }
 	
@@ -43,24 +28,62 @@ public:
 	bool operator<(const LibNode& node) const { return lpath_ < node.lpath_; }
 };
 
-
-class LibNodeCalalog : public std::vector<LibNode>
+class LibNodeMarked : public LibNode
 {
 public:
-	LibNodeCalalog(int reservesize = 15000);
+	enum MarkType
+	{	
+		NO_FILE,
+		WRONG_SIZE,
+		WRONG_CASE,
+		ALL_GOOD
+	};
+
+private:
+	MarkType mark_;
+
+	std::wstring correctPath_;	
+	FileSizeType correctSize_;
+
+public:
+	LibNodeMarked(const wchar_t* _path, FileSizeType _size);
+
+	void setMark(MarkType _mark) { mark_ = _mark; }
+	MarkType mark() const { return mark_; }
+
+	void setCorrectPath(const std::wstring& correctPath) { correctPath_ = correctPath; }
+	const wchar_t* getCorrectPath() const { return correctPath_.c_str(); }
+
+	void setCorrectSize(FileSizeType correctSize) { correctSize_ = correctSize; }
+	FileSizeType getCorrectSize() const { return correctSize_; }
+};
+
+template <class LibNodeType>
+class LibNodeCatalog : public std::vector<LibNodeType>
+{
+public:
+	LibNodeCatalog(int reservesize = 15000) {
+		reserve(reservesize);
+	}
 
 	bool isDot(const wchar_t *name)
 	{
 		return *name == L'.' && (!name[1] || name[1] == L'.' && !name[2]);
 	}
 
-	void add(const wchar_t *str, FileSizeType size);
-	void add(const std::wstring& str, FileSizeType size);
+	void add(const wchar_t *str, FileSizeType size) {
+		push_back(LibNodeType(str, size));
+	}
+	void add(const std::wstring& str, FileSizeType size){
+		push_back(LibNodeType(str.c_str(), size));
+	}
 
-	void sort();
+	void sort() {
+		std::sort(begin(), end());
+	}
 
 	iterator bsearch(const wchar_t* path) {
-		LibNode val(path, 0);
+		LibNodeType val(path, 0);
 		iterator it = std::lower_bound(begin(), end(), val);
 		if(it != end() && !(val < *it))
 			return it;
@@ -68,7 +91,7 @@ public:
 	}
 
 	const_iterator bsearch(const wchar_t* path) const {
-		LibNode val(path, 0);
+		LibNodeType val(path, 0);
 		const_iterator it = std::lower_bound(begin(), end(), val);
 		if(it != end() && !(val < *it))
 			return it;

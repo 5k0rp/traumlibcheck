@@ -21,23 +21,26 @@ void splitPath(Combowstrings& tree, const wchar_t* ptr)
 	tree.push_back(std::wstring(start, ptr));
 }
 
-bool checkAndPrint(std::wostream& fout, const LibNodeCalalog& cat, LibNode::MarkType type, const wchar_t* header)
+bool checkAndPrint(std::wostream& fout, const LibNodeCatalog<LibNodeMarked>& cat, LibNodeMarked::MarkType type, const wchar_t* header)
 {
 	bool isFind = false;
-	for(LibNodeCalalog::const_iterator it = cat.begin(); it != cat.end(); ++it)
+	for(LibNodeCatalog<LibNodeMarked>::const_iterator it = cat.begin(); it != cat.end(); ++it)
 		if(it->mark() == type){
 			if(!isFind){
 				isFind = true;
 				fout << wendl << header << wendl;
 			}
-			fout << it->path() << wendl;
+			fout << it->getCorrectPath();
+			if(it->getCorrectSize())
+				fout << ", size: " << it->getCorrectSize();
+			fout << wendl;
 		}
 	return isFind;
 }
 
 int wmain(int argc, wchar_t* argv[])
 {
-	wprintf(L"Traum library check tool. v1.1 2010-01-30. Sk0rp\n");
+	wprintf(L"Traum library check tool. v1.2 2010-12-14. Sk0rp\n");
 	wprintf(L"\n Look for helps and updates:\n http://code.google.com/p/traumlibcheck/\n\n");
 	
 	DirStructure dirStruct;
@@ -94,8 +97,8 @@ int wmain(int argc, wchar_t* argv[])
 	
 	std::wstring lastpath;
 
-	LibNodeCalalog::iterator dit;
-	LibNodeCalalog::iterator tit = traumDb.begin();
+	LibNodeCatalog<LibNodeMarked>::iterator dit;
+	LibNodeCatalog<LibNode>::iterator tit = traumDb.begin();
 	
 	for(; tit != traumDb.end(); ++tit){
 
@@ -112,22 +115,29 @@ int wmain(int argc, wchar_t* argv[])
 			for(; it != tree.end(); ++it){
 				dit = dirStruct.bsearch(it->c_str());
 				if(dit != dirStruct.end())
-					if(wcscmp(LibNode(it->c_str(), 0).file(), dit->file()))
-						dit->setMark(LibNode::WRONG_CASE);
+					if(wcscmp(LibNode(it->c_str(), 0).file(), dit->file())){
+						dit->setMark(LibNodeMarked::WRONG_CASE);
+						dit->setCorrectPath(it->c_str());
+					}
 					else
-						dit->setMark(LibNode::ALL_GOOD);
+						dit->setMark(LibNodeMarked::ALL_GOOD);
 			}
 		}
 
-		LibNodeCalalog::iterator dit = dirStruct.bsearch(tit->path());
+		dit = dirStruct.bsearch(tit->path());
 		if(dit != dirStruct.end()){
 			if(tit->size() == dit->size())
-				if(wcscmp(tit->file(), dit->file()))
-					dit->setMark(LibNode::WRONG_CASE);
+				if(wcscmp(tit->file(), dit->file())){
+					dit->setMark(LibNodeMarked::WRONG_CASE);
+					dit->setCorrectPath(tit->path());
+				}
 				else
-					dit->setMark(LibNode::ALL_GOOD);
-			else
-				dit->setMark(LibNode::WRONG_SIZE);
+					dit->setMark(LibNodeMarked::ALL_GOOD);
+			else {
+				dit->setMark(LibNodeMarked::WRONG_SIZE);
+				dit->setCorrectPath(tit->path());
+				dit->setCorrectSize(tit->size());
+			}
 			
 		}
 		else {
@@ -139,9 +149,9 @@ int wmain(int argc, wchar_t* argv[])
 		}
 	}
 
-	bool overFiles = checkAndPrint(fout, dirStruct, LibNode::NO_FILE, L"\nЛишнее в библиотеке:");
-	overFiles = checkAndPrint(fout, dirStruct, LibNode::WRONG_SIZE, L"\nДругой размер:") || overFiles;
-	overFiles = checkAndPrint(fout, dirStruct, LibNode::WRONG_CASE, L"\nОтличается регистр букв:") || overFiles;
+	bool overFiles = checkAndPrint(fout, dirStruct, LibNodeMarked::NO_FILE, L"\nЛишнее в библиотеке:");
+	overFiles = checkAndPrint(fout, dirStruct, LibNodeMarked::WRONG_SIZE, L"\nДругой размер:") || overFiles;
+	overFiles = checkAndPrint(fout, dirStruct, LibNodeMarked::WRONG_CASE, L"\nОтличается регистр букв:") || overFiles;
 
 	if(!lostFiles && !overFiles)
 		fout << wendl << L"Расхождений не обнаружено!" << wendl;

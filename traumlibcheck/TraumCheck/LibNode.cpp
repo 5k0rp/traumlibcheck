@@ -6,8 +6,7 @@
 #include <functional>
 
 LibNode::LibNode(const wchar_t* _path, FileSizeType _size)
-: mark_(NO_FILE)
-, path_(_path)
+: path_(_path)
 , lpath_(_path)
 , size_(_size)
 {
@@ -26,22 +25,11 @@ void LibNode::getFolder(std::wstring& out) const
 		out = std::wstring(path_.begin(), path_.begin() + idx);
 }
 
-LibNodeCalalog::LibNodeCalalog(int reservesize)
+LibNodeMarked::LibNodeMarked(const wchar_t* _path, FileSizeType _size)
+: LibNode(_path, _size)
+, mark_(NO_FILE)
+, correctPath_(_path)
+, correctSize_(_size)
 {
-	reserve(reservesize);
-}
 
-void LibNodeCalalog::add(const wchar_t *str, FileSizeType size)
-{
-	push_back(LibNode(str, size));
-}
-
-void LibNodeCalalog::add(const std::wstring& str, FileSizeType size)
-{
-	push_back(LibNode(str.c_str(), size));
-}
-
-void LibNodeCalalog::sort()
-{
-	std::sort(begin(), end());
 }

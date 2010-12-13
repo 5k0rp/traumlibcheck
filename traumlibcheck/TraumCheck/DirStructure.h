@@ -2,7 +2,7 @@
 
 #include "LibNode.h"
 
-class DirStructure : public LibNodeCalalog
+class DirStructure : public LibNodeCatalog<LibNodeMarked>
 {
 public:
 	DirStructure();
